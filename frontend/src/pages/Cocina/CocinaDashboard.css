@@ -1,0 +1,181 @@
+.cocina-layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+.cocina-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #1e293b;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.brand h2 {
+    font-family: 'Outfit', sans-serif;
+    margin: 0;
+}
+
+.accent-icon {
+    color: #f59e0b;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+}
+
+.cocina-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.pedidos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.no-orders {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    color: #64748b;
+    gap: 1rem;
+    font-size: 1.2rem;
+}
+
+.pedido-ticket {
+    background-color: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+}
+
+.pedido-ticket.pendiente {
+    border-top: 4px solid #ef4444; /* Rojo para nuevos */
+}
+
+.pedido-ticket.preparacion {
+    border-top: 4px solid #f59e0b; /* Naranja para en progreso */
+}
+
+.pedido-ticket.listo {
+    border-top: 4px solid #10b981; /* Verde (no debería verse mucho aquí) */
+}
+
+.ticket-header {
+    padding: 1rem;
+    background-color: rgba(15, 23, 42, 0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.mesa-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.mesa-number {
+    font-weight: 700;
+    font-size: 1.1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.estado-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.estado-badge.pendiente { background-color: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+.estado-badge.preparacion { background-color: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+
+.time-info {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.ticket-items {
+    list-style: none;
+    padding: 1rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.ticket-items li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 1.05rem;
+}
+
+.item-qty {
+    font-weight: 700;
+    color: #38bdf8;
+    background-color: rgba(56, 189, 248, 0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+}
+
+.ticket-actions {
+    padding: 1rem;
+    background-color: rgba(15, 23, 42, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ticket-actions button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-success {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-success:hover {
+    background-color: rgba(16, 185, 129, 0.3);
+}
