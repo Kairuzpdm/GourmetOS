@@ -50,7 +50,7 @@ export default function Reporte() {
                         <div className="kpi-info">
                             <span className="kpi-label">Total Recaudado Hoy</span>
                             <span className="kpi-value">
-                                ${Number(reporte.total_ventas || 0).toFixed(2)}
+                                Bs {Number(reporte.total_ventas || 0).toFixed(2)}
                             </span>
                         </div>
                     </div>
@@ -72,7 +72,7 @@ export default function Reporte() {
                         <div className="kpi-info">
                             <span className="kpi-label">Ticket Promedio</span>
                             <span className="kpi-value">
-                                ${reporte.total_pedidos > 0
+                                Bs {reporte.total_pedidos > 0
                                     ? (reporte.total_ventas / reporte.total_pedidos).toFixed(2)
                                     : '0.00'}
                             </span>

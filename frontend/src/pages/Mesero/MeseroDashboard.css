@@ -58,6 +58,7 @@
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .mesas-section h3, .menu-section h3 {
@@ -105,6 +106,31 @@
     font-size: 0.75rem;
     text-transform: capitalize;
     color: #94a3b8;
+}
+
+.menu-categorias {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.categoria-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.categoria-nombre {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #38bdf8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(56, 189, 248, 0.3);
 }
 
 .productos-grid {
@@ -203,6 +229,12 @@
     gap: 0.75rem;
 }
 
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .item-qty {
     background-color: rgba(56, 189, 248, 0.1);
     color: #38bdf8;
@@ -210,6 +242,22 @@
     border-radius: 4px;
     font-weight: bold;
     font-size: 0.8rem;
+}
+
+.btn-remove {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(248, 113, 113, 0.15);
+    color: #fecaca;
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-remove:hover {
+    background-color: rgba(248, 113, 113, 0.25);
+    transform: translateY(-1px);
 }
 
 .item-total {
@@ -249,4 +297,117 @@
     color: #94a3b8;
     cursor: not-allowed;
     box-shadow: none;
+}
+
+@media (max-width: 1024px) {
+    .mesero-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .mesas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .productos-grid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .mesero-layout {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .mesero-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .mesero-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .mesas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mesas-section,
+    .menu-section,
+    .carrito-section {
+        padding: 1rem;
+    }
+
+    .carrito-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .carrito-footer {
+        padding-top: 1rem;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .item-actions {
+        justify-content: space-between;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .btn-remove {
+        width: auto;
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .item-total {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .mesero-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .brand,
+    .user-section {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .brand h2 {
+        font-size: 1.2rem;
+    }
+
+    .role-badge {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .mesa-card,
+    .producto-card,
+    .cart-item {
+        padding: 0.9rem;
+    }
+
+    .btn-remove {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
 }

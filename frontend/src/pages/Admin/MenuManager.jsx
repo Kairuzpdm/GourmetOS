@@ -247,7 +247,7 @@ export default function MenuManager() {
                                             <td>
                                                 <span className="badge-category">{prod.categoria_nombre || 'Sin categoría'}</span>
                                             </td>
-                                            <td className="price-cell">${prod.precio}</td>
+                                            <td className="price-cell">Bs {prod.precio}</td>
                                             <td>
                                                 <span className={`status-badge ${prod.disponible ? 'active' : 'inactive'}`}>
                                                     {prod.disponible ? 'Disponible' : 'Agotado'}

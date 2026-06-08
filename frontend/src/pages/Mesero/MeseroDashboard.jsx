@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
-import api from '../../services/api';
+import { useMesas } from '../../hooks/useMesas';
+import { useProductos } from '../../hooks/useProductos';
+import { usePedidos } from '../../hooks/usePedidos';
 import './MeseroDashboard.css';
 import { LogOut, ShoppingCart, CheckCircle, Coffee } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -8,25 +10,13 @@ import { useNavigate } from 'react-router-dom';
 export default function MeseroDashboard() {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
-    const [mesas, setMesas] = useState([]);
-    const [productos, setProductos] = useState([]);
+    
+    const { mesas, loading: loadingMesas, refetch: refetchMesas } = useMesas();
+    const { productos, loading: loadingProductos } = useProductos(true);
+    const { crearPedido, loading: enviandoPedido } = usePedidos();
+
     const [mesaSeleccionada, setMesaSeleccionada] = useState(null);
     const [carrito, setCarrito] = useState([]);
-    
-    useEffect(() => {
-        fetchMesas();
-        fetchProductos();
-    }, []);
-
-    const fetchMesas = async () => {
-        const res = await api.get('/mesas');
-        setMesas(res.data);
-    };
-
-    const fetchProductos = async () => {
-        const res = await api.get('/productos');
-        setProductos(res.data.filter(p => p.disponible));
-    };
 
     const handleLogout = () => {
         logout();
@@ -49,17 +39,27 @@ export default function MeseroDashboard() {
     const enviarPedido = async () => {
         if (carrito.length === 0) return;
         try {
-            await api.post('/pedidos', {
-                mesa_id: mesaSeleccionada.id,
-                detalles: carrito
-            });
+            await crearPedido(mesaSeleccionada.id, carrito);
             alert('Pedido enviado a cocina');
             setCarrito([]);
             setMesaSeleccionada(null);
-            fetchMesas(); // Actualizar estado de las mesas
+            refetchMesas(); // Actualizar estado de las mesas
         } catch (error) {
-            alert('Error al enviar pedido');
+            const errorMsg = error.response?.data?.message || error.message || 'Error al enviar pedido';
+            console.error('Error enviando pedido:', errorMsg);
+            alert('Error al enviar pedido: ' + errorMsg);
         }
+    };
+
+    const quitarDelCarrito = (productoId) => {
+        setCarrito(prev => prev.reduce((acc, item) => {
+            if (item.producto_id !== productoId) {
+                acc.push(item);
+            } else if (item.cantidad > 1) {
+                acc.push({ ...item, cantidad: item.cantidad - 1 });
+            }
+            return acc;
+        }, []));
     };
 
     const totalCarrito = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
@@ -80,34 +80,49 @@ export default function MeseroDashboard() {
             <main className="mesero-content">
                 <section className="mesas-section">
                     <h3>Mesas</h3>
-                    <div className="mesas-grid">
-                        {mesas.map(mesa => (
-                            <div 
-                                key={mesa.id} 
-                                className={`mesa-card ${mesa.estado} ${mesaSeleccionada?.id === mesa.id ? 'selected' : ''}`}
-                                onClick={() => {
-                                    if(mesa.estado === 'libre') setMesaSeleccionada(mesa)
-                                    else alert('La mesa ya está ocupada. Funcionalidad de editar pedido en construcción.')
-                                }}
-                            >
-                                <Coffee size={24} />
-                                <span>{mesa.numero_mesa}</span>
-                                <span className="estado">{mesa.estado}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {loadingMesas ? <p>Cargando mesas...</p> : (
+                        <div className="mesas-grid">
+                            {mesas.map(mesa => (
+                                <div 
+                                    key={mesa.id} 
+                                    className={`mesa-card ${mesa.estado} ${mesaSeleccionada?.id === mesa.id ? 'selected' : ''}`}
+                                    onClick={() => setMesaSeleccionada(mesa)}
+                                >
+                                    <Coffee size={24} />
+                                    <span>{mesa.numero_mesa}</span>
+                                    <span className="estado">{mesa.estado}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
                 <section className="menu-section">
                     <h3>Menú</h3>
-                    <div className="productos-grid">
-                        {productos.map(prod => (
-                            <div key={prod.id} className="producto-card" onClick={() => agregarAlCarrito(prod)}>
-                                <span className="prod-name">{prod.nombre}</span>
-                                <span className="prod-price">${prod.precio}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {loadingProductos ? <p>Cargando menú...</p> : (
+                        <div className="menu-categorias">
+                            {Object.entries(
+                                productos.reduce((acc, prod) => {
+                                    const categoria = prod.categoria_nombre || 'Sin categoría';
+                                    if (!acc[categoria]) acc[categoria] = [];
+                                    acc[categoria].push(prod);
+                                    return acc;
+                                }, {})
+                            ).map(([categoria, prods]) => (
+                                <div key={categoria} className="categoria-grupo">
+                                    <h4 className="categoria-nombre">{categoria}</h4>
+                                    <div className="productos-grid">
+                                        {prods.map(prod => (
+                                            <div key={prod.id} className="producto-card" onClick={() => agregarAlCarrito(prod)}>
+                                                <span className="prod-name">{prod.nombre}</span>
+                                                <span className="prod-price">Bs {prod.precio}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
                 <aside className="carrito-section">
@@ -126,7 +141,16 @@ export default function MeseroDashboard() {
                                         <span className="item-qty">{item.cantidad}x</span>
                                         <span className="item-name">{item.nombre}</span>
                                     </div>
-                                    <span className="item-total">${(item.precio * item.cantidad).toFixed(2)}</span>
+                                    <div className="item-actions">
+                                        <button
+                                            type="button"
+                                            className="btn-remove"
+                                            onClick={() => quitarDelCarrito(item.producto_id)}
+                                        >
+                                            - 1
+                                        </button>
+                                        <span className="item-total">Bs {(item.precio * item.cantidad).toFixed(2)}</span>
+                                    </div>
                                 </div>
                             ))
                         )}
@@ -135,14 +159,14 @@ export default function MeseroDashboard() {
                     <div className="carrito-footer">
                         <div className="total-row">
                             <span>Total</span>
-                            <span className="total-amount">${totalCarrito.toFixed(2)}</span>
+                            <span className="total-amount">Bs {totalCarrito.toFixed(2)}</span>
                         </div>
                         <button 
                             className="btn-primary w-100" 
-                            disabled={carrito.length === 0 || !mesaSeleccionada}
+                            disabled={carrito.length === 0 || !mesaSeleccionada || enviandoPedido}
                             onClick={enviarPedido}
                         >
-                            <CheckCircle size={18} /> Enviar a Cocina
+                            <CheckCircle size={18} /> {enviandoPedido ? 'Enviando...' : 'Enviar a Cocina'}
                         </button>
                     </div>
                 </aside>

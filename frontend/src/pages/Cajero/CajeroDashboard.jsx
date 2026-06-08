@@ -13,20 +13,24 @@ export default function CajeroDashboard() {
 
     const fetchData = async () => {
         try {
+            console.log('📥 Obteniendo datos del cajero...');
             const [pedidosRes, reporteRes] = await Promise.all([
                 api.get('/pedidos/por-cobrar'),
                 api.get('/reportes/ventas-dia')
             ]);
+            console.log('✅ Pedidos por cobrar:', pedidosRes.data);
+            console.log('✅ Reporte:', reporteRes.data);
             setPedidos(pedidosRes.data);
             setReporte(reporteRes.data || { total_ventas: 0, total_pedidos: 0 });
         } catch (error) {
-            console.error('Error fetching cajero data', error);
+            console.error('❌ Error fetching cajero data:', error.response?.data || error.message);
         }
     };
 
     useEffect(() => {
+        console.log('🔐 Cajero logueado como:', user);
         fetchData();
-        const interval = setInterval(fetchData, 10000);
+        const interval = setInterval(fetchData, 2000);
         return () => clearInterval(interval);
     }, []);
 
@@ -35,16 +39,40 @@ export default function CajeroDashboard() {
         navigate('/login');
     };
 
-    const cobrarPedido = async (id, mesa_id) => {
+    const cobrarPedido = async (ids, mesa_id) => {
         if (!window.confirm('¿Confirmar cobro y liberar mesa?')) return;
         try {
-            await api.post(`/pedidos/${id}/pagar`, { mesa_id });
+            for (const id of ids) {
+                await api.post(`/pedidos/${id}/pagar`, { mesa_id });
+            }
             alert('Cobro registrado. Mesa liberada.');
             fetchData();
         } catch (error) {
             alert('Error procesando cobro');
         }
     };
+
+    const pedidosAgrupados = pedidos.reduce((acc, pedido) => {
+        if (!acc[pedido.numero_mesa]) {
+            acc[pedido.numero_mesa] = {
+                mesa_id: pedido.mesa_id,
+                numero_mesa: pedido.numero_mesa,
+                total: 0,
+                pedidosIds: [],
+                todosListos: true,
+                estados: new Set()
+            };
+        }
+        acc[pedido.numero_mesa].total += parseFloat(pedido.total);
+        acc[pedido.numero_mesa].pedidosIds.push(pedido.id);
+        if (pedido.estado !== 'listo') {
+            acc[pedido.numero_mesa].todosListos = false;
+        }
+        acc[pedido.numero_mesa].estados.add(pedido.estado);
+        return acc;
+    }, {});
+
+    const agrupadosArr = Object.values(pedidosAgrupados);
 
     return (
         <div className="cajero-layout">
@@ -67,7 +95,7 @@ export default function CajeroDashboard() {
                         </div>
                         <div className="report-info">
                             <span className="report-label">Ventas del Día</span>
-                            <span className="report-value">${reporte.total_ventas || '0.00'}</span>
+                            <span className="report-value">Bs {reporte.total_ventas || '0.00'}</span>
                         </div>
                     </div>
                     <div className="report-card">
@@ -84,28 +112,30 @@ export default function CajeroDashboard() {
                 <section className="pedidos-section">
                     <h3>Pedidos Pendientes de Cobro</h3>
                     <div className="cobro-grid">
-                        {pedidos.length === 0 ? (
+                        {agrupadosArr.length === 0 ? (
                             <p className="empty-msg">No hay pedidos pendientes de cobro.</p>
                         ) : (
-                            pedidos.map(pedido => (
-                                <div key={pedido.id} className="cobro-card">
+                            agrupadosArr.map(grupo => (
+                                <div key={grupo.numero_mesa} className="cobro-card">
                                     <div className="cobro-header">
-                                        <span className="mesa">{pedido.numero_mesa}</span>
-                                        <span className={`estado-badge ${pedido.estado}`}>{pedido.estado}</span>
+                                        <span className="mesa">{grupo.numero_mesa}</span>
+                                        <span className={`estado-badge ${grupo.todosListos ? 'listo' : 'pendiente'}`}>
+                                            {Array.from(grupo.estados).join(', ')}
+                                        </span>
                                     </div>
                                     <div className="cobro-body">
                                         <span className="total-label">Total a Pagar</span>
-                                        <span className="total-monto">${pedido.total}</span>
+                                        <span className="total-monto">Bs {grupo.total.toFixed(2)}</span>
                                     </div>
                                     <button 
                                         className="btn-primary w-100" 
-                                        onClick={() => cobrarPedido(pedido.id, pedido.mesa_id)}
-                                        disabled={pedido.estado === 'pendiente' || pedido.estado === 'preparacion'}
+                                        onClick={() => cobrarPedido(grupo.pedidosIds, grupo.mesa_id)}
+                                        disabled={!grupo.todosListos}
                                     >
                                         <DollarSign size={18} /> Registrar Cobro
                                     </button>
-                                    {(pedido.estado === 'pendiente' || pedido.estado === 'preparacion') && (
-                                        <span className="warn-text">Esperando que se entregue a la mesa</span>
+                                    {!grupo.todosListos && (
+                                        <span className="warn-text">Faltan pedidos de cocina</span>
                                     )}
                                 </div>
                             ))

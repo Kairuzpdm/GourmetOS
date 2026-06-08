@@ -70,7 +70,7 @@ export default function AdminHome() {
                     <div className="kpi-icon"><TrendingUp size={22} /></div>
                     <div className="kpi-body">
                         <span className="kpi-label">Ventas del Día</span>
-                        <span className="kpi-value">${Number(reporte.total_ventas || 0).toFixed(2)}</span>
+                        <span className="kpi-value">Bs {Number(reporte.total_ventas || 0).toFixed(2)}</span>
                     </div>
                 </div>
                 <div className="kpi-card kpi-blue">
@@ -84,7 +84,7 @@ export default function AdminHome() {
                     <div className="kpi-icon kpi-purple"><DollarSign size={22} /></div>
                     <div className="kpi-body">
                         <span className="kpi-label">Ticket Promedio</span>
-                        <span className="kpi-value">${ticketPromedio}</span>
+                        <span className="kpi-value">Bs {ticketPromedio}</span>
                     </div>
                 </div>
                 <div className="kpi-card kpi-orange">

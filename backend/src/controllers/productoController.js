@@ -1,44 +1,40 @@
-const Producto = require('../models/productoModel');
+const productoService = require('../services/ProductoService');
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
     try {
-        const productos = await Producto.getAll();
+        const productos = await productoService.getAll();
         res.json(productos);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error obteniendo productos' });
+        next(error);
     }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
     try {
-        const id = await Producto.create(req.body);
-        res.status(201).json({ id, ...req.body });
+        const id = await productoService.create(req.body);
+        res.status(201).json({ message: 'Producto creado', id });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error creando producto' });
+        next(error);
     }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
     try {
         const { id } = req.params;
-        await Producto.update(id, req.body);
+        await productoService.update(id, req.body);
         res.json({ message: 'Producto actualizado' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error actualizando producto' });
+        next(error);
     }
 };
 
-const remove = async (req, res) => {
+const remove = async (req, res, next) => {
     try {
         const { id } = req.params;
-        await Producto.delete(id);
+        await productoService.delete(id);
         res.json({ message: 'Producto eliminado' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error eliminando producto' });
+        next(error);
     }
 };
 

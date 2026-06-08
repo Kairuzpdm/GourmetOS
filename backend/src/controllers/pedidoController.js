@@ -1,58 +1,71 @@
-const Pedido = require('../models/pedidoModel');
+const pedidoService = require('../services/PedidoService');
 
-const crear = async (req, res) => {
+const crear = async (req, res, next) => {
     try {
         const { mesa_id, detalles, usuario_id } = req.body;
         
-        const pedidoId = await Pedido.crear(mesa_id, usuario_id || 2, detalles); // Fallback to usuario 2 (mesero test)
+        // Validar que existan detalles
+        if (!mesa_id || !detalles || detalles.length === 0) {
+            return res.status(400).json({ message: 'Mesa y detalles son requeridos' });
+        }
+        
+        // Validar que cada detalle tenga los campos necesarios
+        for (let item of detalles) {
+            if (!item.producto_id || !item.cantidad || !item.precio) {
+                return res.status(400).json({ 
+                    message: `Detalle inválido: ${JSON.stringify(item)}` 
+                });
+            }
+        }
+        
+        // Si usamos el token JWT, req.user.id tendría el ID del usuario
+        const finalUserId = req.user ? req.user.id : (usuario_id || 2);
+
+        const pedidoId = await pedidoService.crear(mesa_id, finalUserId, detalles);
         res.status(201).json({ message: 'Pedido creado', id: pedidoId });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error creando pedido' });
+    } catch (error) {
+        console.error('Error al crear pedido:', error.message);
+        next(error);
     }
 };
 
-const getActivos = async (req, res) => {
+const getActivos = async (req, res, next) => {
     try {
-        const pedidos = await Pedido.getPedidosActivos();
+        const pedidos = await pedidoService.getActivos();
         res.json(pedidos);
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error obteniendo pedidos' });
+    } catch (error) {
+        next(error);
     }
 };
 
-const cambiarEstado = async (req, res) => {
+const cambiarEstado = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { estado } = req.body;
-        await Pedido.cambiarEstadoPedido(id, estado);
+        await pedidoService.cambiarEstado(id, estado);
         res.json({ message: 'Estado actualizado' });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error actualizando estado' });
+    } catch (error) {
+        next(error);
     }
 };
 
-const getPorCobrar = async (req, res) => {
+const getPorCobrar = async (req, res, next) => {
     try {
-        const pedidos = await Pedido.getPedidosPorCobrar();
+        const pedidos = await pedidoService.getPorCobrar();
         res.json(pedidos);
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error obteniendo pedidos por cobrar' });
+    } catch (error) {
+        next(error);
     }
 };
 
-const pagar = async (req, res) => {
+const pagar = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { mesa_id } = req.body;
-        await Pedido.pagarPedido(id, mesa_id);
+        await pedidoService.pagar(id, mesa_id);
         res.json({ message: 'Pedido pagado exitosamente' });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error procesando pago' });
+    } catch (error) {
+        next(error);
     }
 };
 

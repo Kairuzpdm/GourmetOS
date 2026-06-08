@@ -21,8 +21,8 @@ export default function CocinaDashboard() {
 
     useEffect(() => {
         fetchPedidos();
-        // Polling cada 10 segundos
-        const interval = setInterval(fetchPedidos, 10000);
+        // Polling cada 2 segundos para actualización en tiempo real
+        const interval = setInterval(fetchPedidos, 2000);
         return () => clearInterval(interval);
     }, []);
 

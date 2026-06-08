@@ -1,33 +1,16 @@
-const User = require('../models/userModel');
+const authService = require('../services/AuthService');
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     try {
         const { username, password } = req.body;
-
-        if (!username || !password) {
-            return res.status(400).json({ message: 'Usuario y contraseña son requeridos' });
-        }
-
-        const user = await User.findByUsername(username);
-
-        // Validacion simple (idealmente usar bcrypt)
-        if (!user || user.password !== password) {
-            return res.status(401).json({ message: 'Credenciales inválidas' });
-        }
-
-        const { password: _, ...userData } = user;
-
+        const result = await authService.login(username, password);
         res.json({
             message: 'Login exitoso',
-            user: userData
+            ...result
         });
-
     } catch (error) {
-        console.error('Error en login:', error);
-        res.status(500).json({ message: 'Error en el servidor' });
+        next(error);
     }
 };
 
-module.exports = {
-    login
-};
+module.exports = { login };

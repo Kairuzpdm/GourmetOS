@@ -1,0 +1,12 @@
+.card-container {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+.card-container:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}

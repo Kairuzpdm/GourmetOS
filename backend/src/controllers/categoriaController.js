@@ -1,46 +1,40 @@
-const Categoria = require('../models/categoriaModel');
+const categoriaService = require('../services/CategoriaService');
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
     try {
-        const categorias = await Categoria.getAll();
+        const categorias = await categoriaService.getAll();
         res.json(categorias);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error obteniendo categorías' });
+        next(error);
     }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
     try {
-        const { nombre, descripcion } = req.body;
-        const id = await Categoria.create(nombre, descripcion);
-        res.status(201).json({ id, nombre, descripcion });
+        const id = await categoriaService.create(req.body);
+        res.status(201).json({ message: 'Categoría creada', id });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error creando categoría' });
+        next(error);
     }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { nombre, descripcion } = req.body;
-        await Categoria.update(id, nombre, descripcion);
+        await categoriaService.update(id, req.body);
         res.json({ message: 'Categoría actualizada' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error actualizando categoría' });
+        next(error);
     }
 };
 
-const remove = async (req, res) => {
+const remove = async (req, res, next) => {
     try {
         const { id } = req.params;
-        await Categoria.delete(id);
+        await categoriaService.delete(id);
         res.json({ message: 'Categoría eliminada' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error eliminando categoría' });
+        next(error);
     }
 };
 

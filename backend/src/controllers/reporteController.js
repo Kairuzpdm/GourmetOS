@@ -1,12 +1,11 @@
-const Reporte = require('../models/reporteModel');
+const reporteService = require('../services/ReporteService');
 
-const getVentasDelDia = async (req, res) => {
+const getVentasDelDia = async (req, res, next) => {
     try {
-        const reporte = await Reporte.getVentasDelDia();
-        res.json(reporte);
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error obteniendo reporte' });
+        const ventas = await reporteService.getVentasDelDia();
+        res.json(ventas);
+    } catch (error) {
+        next(error);
     }
 };
 

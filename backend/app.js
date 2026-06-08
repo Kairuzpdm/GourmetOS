@@ -26,8 +26,15 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bienvenido a la API del Restaurante' });
 });
 
-const PORT = process.env.PORT || 3000;
+// Global error handler
+const errorHandler = require('./src/middlewares/errorHandler');
+app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Servidor corriendo en el puerto ${PORT}`);
+    });
+}
+
+module.exports = app;

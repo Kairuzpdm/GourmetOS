@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
-import api from '../../services/api';
+import { AuthService } from '../../services/AuthService';
 import './Login.css';
 
 export default function Login() {
@@ -13,8 +13,8 @@ export default function Login() {
         e.preventDefault();
         setError('');
         try {
-            const response = await api.post('/auth/login', { username, password });
-            login(response.data.user);
+            const { user, token } = await AuthService.login(username, password);
+            login(user, token);
         } catch (err) {
             setError(err.response?.data?.message || 'Error de conexión con el servidor');
         }
