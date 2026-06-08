@@ -15,12 +15,12 @@ const mesaRoutes = require('./src/routes/mesaRoutes');
 const pedidoRoutes = require('./src/routes/pedidoRoutes');
 const reporteRoutes = require('./src/routes/reporteRoutes');
 
-app.use('/api/auth', authRoutes);
-app.use('/api/categorias', categoriaRoutes);
-app.use('/api/productos', productoRoutes);
-app.use('/api/mesas', mesaRoutes);
-app.use('/api/pedidos', pedidoRoutes);
-app.use('/api/reportes', reporteRoutes);
+app.use('/auth', authRoutes);
+app.use('/categorias', categoriaRoutes);
+app.use('/productos', productoRoutes);
+app.use('/mesas', mesaRoutes);
+app.use('/pedidos', pedidoRoutes);
+app.use('/reportes', reporteRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Bienvenido a la API del Restaurante' });
@@ -30,11 +30,9 @@ app.get('/', (req, res) => {
 const errorHandler = require('./src/middlewares/errorHandler');
 app.use(errorHandler);
 
-if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Servidor corriendo en el puerto ${PORT}`);
-    });
-}
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
 
 module.exports = app;
