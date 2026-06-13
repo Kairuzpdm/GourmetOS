@@ -69,7 +69,7 @@ class PedidoService {
         try {
             await connection.beginTransaction();
             await connection.query('UPDATE pedidos SET estado = ? WHERE id = ?', ['pagado', id]);
-            const [activeOrders] = await connection.query('SELECT id FROM pedidos WHERE mesa_id = ? AND estado NOT IN ("pagado", "cancelado")', [mesa_id]);
+            const [activeOrders] = await connection.query("SELECT id FROM pedidos WHERE mesa_id = ? AND estado NOT IN ('pagado', 'cancelado')", [mesa_id]);
             if (activeOrders.length === 0) {
                 await connection.query('UPDATE mesas SET estado = ? WHERE id = ?', ['libre', mesa_id]);
             }
