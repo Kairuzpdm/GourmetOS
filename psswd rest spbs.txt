@@ -1,0 +1,40 @@
+1. Install dependencies
+Run this command to install the required dependencies.
+Code:
+File: Code
+```
+npm install postgres
+```
+
+2. Add files
+Add the following files to your project.
+Details:
+host:db.fnlrdkblazblwlavpmcl.supabase.co
+port:5432
+database:postgres
+user:postgres
+Code:
+File: db.js
+```
+1import postgres from 'postgres'
+2
+3const connectionString = process.env.DATABASE_URL
+4const sql = postgres(connectionString)
+5
+6export default sql
+```
+
+File: .env
+```
+DATABASE_URL=postgresql://postgres:d7qn5DRPD8mlX28P@db.fnlrdkblazblwlavpmcl.supabase.co:5432/postgres
+```
+
+3. Install Agent Skills (Optional)
+Agent Skills give AI coding tools ready-made instructions, scripts, and resources for working with Supabase more accurately and efficiently.
+Details:
+npx skills add supabase/agent-skills
+Code:
+File: Code
+```
+npx skills add supabase/agent-skills
+```

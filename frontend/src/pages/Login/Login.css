@@ -157,3 +157,41 @@
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
 }
+
+/* ── Responsivo ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .glass-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+        border-radius: 18px;
+    }
+
+    .brand-title {
+        font-size: 2rem;
+    }
+
+    .card-header {
+        margin-bottom: 1.75rem;
+    }
+
+    .input-group input {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        padding: 0.875rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .glass-card {
+        padding: 1.5rem 1rem;
+        margin: 0.75rem;
+    }
+
+    .brand-title {
+        font-size: 1.75rem;
+    }
+}
+

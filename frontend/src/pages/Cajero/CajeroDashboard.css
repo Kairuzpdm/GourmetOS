@@ -180,3 +180,78 @@
     text-align: center;
     margin-top: 0.5rem;
 }
+
+/* ── Responsivo ─────────────────────────────────────────────────────────── */
+
+/* Tablet (768px) */
+@media (max-width: 768px) {
+    .cajero-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .cajero-content {
+        padding: 1rem;
+        gap: 1.25rem;
+    }
+
+    .report-section {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .report-card {
+        min-width: calc(50% - 0.5rem);
+        flex: 1;
+    }
+}
+
+/* Móvil (576px) */
+@media (max-width: 576px) {
+    .cajero-header {
+        padding: 0.875rem 1rem;
+    }
+
+    .brand h2 {
+        font-size: 1.1rem;
+    }
+
+    .report-section {
+        flex-direction: column;
+    }
+
+    .report-card {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .cobro-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .total-monto {
+        font-size: 1.8rem;
+    }
+
+    .user-section span {
+        font-size: 0.85rem;
+    }
+}
+
+/* Móvil pequeño (380px) */
+@media (max-width: 380px) {
+    .cajero-header {
+        padding: 0.75rem;
+    }
+
+    .report-icon-box {
+        width: 44px;
+        height: 44px;
+    }
+
+    .report-value {
+        font-size: 1.5rem;
+    }
+}
+

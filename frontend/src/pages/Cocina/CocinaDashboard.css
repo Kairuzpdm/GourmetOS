@@ -179,3 +179,72 @@
 .btn-success:hover {
     background-color: rgba(16, 185, 129, 0.3);
 }
+
+/* ── Responsivo ─────────────────────────────────────────────────────────── */
+
+/* Tablet (768px) */
+@media (max-width: 768px) {
+    .cocina-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .cocina-content {
+        padding: 1rem;
+    }
+
+    .pedidos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+}
+
+/* Móvil (576px) */
+@media (max-width: 576px) {
+    .cocina-header {
+        padding: 0.875rem 1rem;
+    }
+
+    .brand h2 {
+        font-size: 1.1rem;
+    }
+
+    .pedidos-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .ticket-items li {
+        font-size: 0.95rem;
+    }
+
+    .user-section span {
+        font-size: 0.85rem;
+    }
+
+    .no-orders {
+        font-size: 1rem;
+        height: 40vh;
+    }
+}
+
+/* Móvil pequeño (380px) */
+@media (max-width: 380px) {
+    .ticket-header {
+        padding: 0.875rem;
+    }
+
+    .ticket-items {
+        padding: 0.875rem;
+    }
+
+    .ticket-actions {
+        padding: 0.875rem;
+    }
+
+    .mesa-number {
+        font-size: 0.95rem;
+    }
+}
+
