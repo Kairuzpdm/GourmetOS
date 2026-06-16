@@ -6,8 +6,8 @@ export function useMesas() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchMesas = useCallback(async () => {
-        setLoading(true);
+    const fetchMesas = useCallback(async (isSilent = false) => {
+        if (!isSilent) setLoading(true);
         try {
             const data = await MesaService.getAll();
             setMesas(data);
@@ -15,14 +15,14 @@ export function useMesas() {
         } catch (err) {
             setError('Error al obtener las mesas');
         } finally {
-            setLoading(false);
+            if (!isSilent) setLoading(false);
         }
     }, []);
 
     useEffect(() => {
         fetchMesas();
-        // Polling cada 2 segundos para actualización automática
-        const interval = setInterval(fetchMesas, 2000);
+        // Polling cada 2 segundos para actualización automática silenciosa
+        const interval = setInterval(() => fetchMesas(true), 2000);
         return () => clearInterval(interval);
     }, [fetchMesas]);
 

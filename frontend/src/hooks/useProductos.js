@@ -6,8 +6,8 @@ export function useProductos(soloDisponibles = false) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchProductos = useCallback(async () => {
-        setLoading(true);
+    const fetchProductos = useCallback(async (isSilent = false) => {
+        if (!isSilent) setLoading(true);
         try {
             const data = await ProductoService.getAll();
             if (soloDisponibles) {
@@ -19,14 +19,14 @@ export function useProductos(soloDisponibles = false) {
         } catch (err) {
             setError('Error al obtener los productos');
         } finally {
-            setLoading(false);
+            if (!isSilent) setLoading(false);
         }
     }, [soloDisponibles]);
 
     useEffect(() => {
         fetchProductos();
-        // Polling cada 5 segundos para productos actualizados
-        const interval = setInterval(fetchProductos, 5000);
+        // Polling cada 5 segundos para productos actualizados silencioso
+        const interval = setInterval(() => fetchProductos(true), 5000);
         return () => clearInterval(interval);
     }, [fetchProductos]);
 
